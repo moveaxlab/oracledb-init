@@ -2,11 +2,11 @@
 
 set -o pipefail
 
-echo "<<EOF
->> declare
+sqlplus $ADMIN_USER/$ADMIN_PASSWORD@$dsn <<EOF
+declare
 userexist integer;
 begin
-  select count(*) into userexist from dba_users where username='$DB_USER';
+  select count(*) into userexist from dba_users where upper(username)=upper('$DB_USER');
   if (userexist = 0) then
     execute immediate 'create user $DB_USER identified by $PASSWORD';
   end if;
@@ -23,4 +23,5 @@ grant
     unlimited tablespace
 to $DB_USER
 /
-EOF" | sqlplus $ADMIN_USER/$ADMIN_PASSWORD@$dsn
+exit sql.sqlcode;
+EOF
