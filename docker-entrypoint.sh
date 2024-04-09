@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -o pipefail
+set -euo pipefail
 
 sqlplus $ADMIN_USER/$ADMIN_PASSWORD@$dsn <<EOF
 declare
