@@ -10,13 +10,13 @@ curl https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle
 yum --nogpgcheck localinstall instant.rpm -y
 yum --nogpgcheck localinstall sqlplus.rpm -y
 
-sqlplus $ADMIN_USER/$ADMIN_PASSWORD@$dsn <<EOF
+sqlplus $ADMIN_USER/$ADMIN_PASSWORD@"$dsn" <<EOF
 declare
 userexist integer;
 begin
   select count(*) into userexist from dba_users where upper(username)=upper('$DB_USER');
   if (userexist = 0) then
-    execute immediate 'create user $DB_USER identified by $PASSWORD';
+    execute immediate 'create user $DB_USER identified by "$PASSWORD"';
   end if;
 end;
 /
