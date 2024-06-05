@@ -21,7 +21,7 @@ jobs:
         ports:
           - 1521:1521
         options:
-          --health-cmd bash /u01/scripts/healthcheck.sh
+          --health-cmd "bash /u01/scripts/healthcheck.sh"
           --health-interval 60s
           --health-timeout 10s
           --health-retries 5
@@ -31,4 +31,4 @@ jobs:
       - name: init schema 
         uses: docker://ghcr.io/moveaxlab/oracledb-init:latest
         with:
-          args: -e ADMIN_USER="admin" -e ADMIN_PASSWORD="${{ inputs.ADMIN_PASSWORD }}" -e USE_ADMIN_PWD_FOR_SCHEMAS=true -e SCHEMAS="test_user"
+          args: -e ADMIN_USER="admin" -e ADMIN_PASSWORD="${{ inputs.ADMIN_PASSWORD }}" -e USE_ADMIN_PWD_FOR_SCHEMAS=true -e SCHEMAS="test_user" -e dsn="oracledb:1521/MYATP"
