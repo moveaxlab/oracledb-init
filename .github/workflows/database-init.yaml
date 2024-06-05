@@ -1,5 +1,5 @@
 #
-name: Create and publish Docker image
+name: Initialize an Oracle ADB 
 
 on: 
   workflow_dispatch:
