@@ -1,0 +1,34 @@
+#
+name: Create and publish Docker image
+
+on: 
+  workflow_dispatch:
+    inputs:
+      ADMIN_PASSWORD:
+        description: "Password for admin user"
+        required: true
+        default: "Password#4Admin"
+
+jobs:
+  database-init:
+    runs-on: ubuntu-latest
+    services:
+      oracledb:
+        image: ghcr.io/oracle/adb-free:24.3.2.1
+        env:
+          WORKLOAD_TYPE: ATP
+          ADMIN_PASSWORD: ${{ inputs.ADMIN_PASSWORD }}
+        ports:
+          - 1521:1521
+        options:
+          --health-cmd bash /u01/scripts/healthcheck.sh
+          --health-interval 60s
+          --health-timeout 10s
+          --health-retries 5
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+      - name: init schema 
+        uses: docker://ghcr.io/moveaxlab/oracledb-init:latest
+        with:
+          args: -e ADMIN_USER="admin" -e ADMIN_PASSWORD="${{ inputs.ADMIN_PASSWORD }}" -e USE_ADMIN_PWD_FOR_SCHEMAS=true -e SCHEMAS="test_user"
