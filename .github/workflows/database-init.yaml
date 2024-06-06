@@ -31,4 +31,8 @@ jobs:
       - name: init schema 
         uses: docker://ghcr.io/moveaxlab/oracledb-init:latest
         with:
-          args: -e ADMIN_USER="admin" -e ADMIN_PASSWORD="${{ inputs.ADMIN_PASSWORD }}" -e USE_ADMIN_PWD_FOR_SCHEMAS=true -e SCHEMAS="test_user" -e dsn="oracledb:1521/MYATP"
+          ADMIN_USER: "admin"
+          ADMIN_PASSWORD: "${{ inputs.ADMIN_PASSWORD }}"
+          USE_ADMIN_PWD_FOR_SCHEMAS: true
+          SCHEMAS: "test_user"
+          dsn: "oracledb:1521/MYATP"
