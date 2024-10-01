@@ -4,6 +4,17 @@ if [[ -z "${USE_ADMIN_PWD_FOR_SCHEMAS}" ]]; then
   USE_ADMIN_PWD_FOR_SCHEMAS=false
 fi
 
+if [[ -z "${ALLOW_GLOBAL_CRUD}" ]]; then
+  ALLOW_GLOBAL_CRUD=false
+fi
+
+if [[ -z "${SCHEMAS}" ]];then
+  if ! [[ -z "${DB_USER}" ]]; then
+    SCHEMAS=$DB_USER
+    declare ${DB_USER}_PASSWORD=$PASSWORD
+  fi
+fi
+
 set -euo pipefail
 SCHEMAS_ARRAY=($(echo $SCHEMAS | tr "," "\n"))
 
@@ -15,7 +26,6 @@ if [ $USE_ADMIN_PWD_FOR_SCHEMAS = true ]; then
 else
   PASSWORD_VAR="${SCHEMA}_PASSWORD"
   SCHEMA_PASSWORD="${!PASSWORD_VAR}" 
-  echo "schema password: $SCHEMA_PASSWORD" 
 fi
   sqlplus $ADMIN_USER/$ADMIN_PASSWORD@"$dsn" <<EOF
 declare
@@ -35,7 +45,9 @@ grant
     create sequence,
     select any dictionary,
     change notification,
-    unlimited tablespace
+    create trigger,
+    unlimited tablespace $( if [ $ALLOW_GLOBAL_CRUD = true ]; then echo ",
+    select any table, insert any table, update any table, delete any table" ;fi )
 to $SCHEMA
 /
 exit sql.sqlcode;
