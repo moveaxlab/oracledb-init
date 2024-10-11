@@ -8,6 +8,10 @@ if [[ -z "${ALLOW_GLOBAL_CRUD}" ]]; then
   ALLOW_GLOBAL_CRUD=false
 fi
 
+if [[ -z "${ALLOW_GLOBAL_READ}" ]]; then
+  ALLOW_GLOBAL_READ=false
+fi
+
 if [[ -z "${SCHEMAS}" ]];then
   if ! [[ -z "${DB_USER}" ]]; then
     SCHEMAS=$DB_USER
@@ -46,8 +50,8 @@ grant
     select any dictionary,
     change notification,
     create trigger,
-    unlimited tablespace $( if [ $ALLOW_GLOBAL_CRUD = true ]; then echo ",
-    select any table, insert any table, update any table, delete any table" ;fi )
+    unlimited tablespace $( if [ $ALLOW_GLOBAL_CRUD = true ] || [ $ALLOW_GLOBAL_READ = true ]; then echo ",
+    select any table" ;fi ) $( if [ $ALLOW_GLOBAL_CRUD = true ]; then echo ", insert any table, update any table, delete any table" ;fi )
 to $SCHEMA
 /
 exit sql.sqlcode;
