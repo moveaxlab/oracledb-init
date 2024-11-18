@@ -48,6 +48,7 @@ grant
     create type,
     create sequence,
     select any dictionary,
+    create view,
     change notification,
     create trigger,
     unlimited tablespace $( if [ $ALLOW_GLOBAL_CRUD = true ] || [ $ALLOW_GLOBAL_READ = true ]; then echo ",
